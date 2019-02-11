@@ -1,0 +1,9 @@
+TODO:
+
+1. connect with database
+2. run first query
+3. try to write data to database
+4. images?
+5. way of storing questions and answers (json?)
+6. user interface for adding this 
+7. getting statistics
