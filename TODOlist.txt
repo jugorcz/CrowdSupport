@@ -1,9 +1,32 @@
 TODO:
 
-1. connect with database
-2. run first query
-3. try to write data to database
-4. images?
-5. way of storing questions and answers (json?)
-6. user interface for adding this 
-7. getting statistics
+-> connect with database DONE
+-> run first query DONE
+-> try to write data to database 
+
+        INSERT INTO Game (gameName, minLevel, language)
+            VALUES ('a', '0', 'ENG');
+        DELETE FROM Game WHERE gameID = 2005
+        UPDATE Game SET accessKey = 1234 WHERE gameID = 1
+
+-> images?
+-> way of storing questions and answers (json?)
+-> user interface for adding this 
+-> getting statistics
+-> new column in Game table - accessKey DONE
+
+-> kiedy w aplikaji użytkownik poprosi o wygenerowanie accessKey to w bazie tworzona jest pusta gra, zawiera tylko gameID, accessKey, ownerID
+
+kroki:
+    1. result = SELECT COUNT(*) FROM GAME WHERE ownerID = 4
+    2. accessKey = profileID + result + 1
+    3. INSERT INTO Game (accessKey, ownerID)
+            VALUES ('accessKey', '4');
+
+-> aplikacja nie wyswietla gry jak gameNAme == NULL
+
+-> skrypt sprawdza czy dla danego klucza jest wpis w bazie i czy nie jest już uzupełniony
+
+-> jeśli uzupełniony pokazuje statystyki dotyczące tej gry
+
+-> jeśli nie to pobiera listę pytań
