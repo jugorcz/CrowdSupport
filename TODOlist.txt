@@ -2,7 +2,7 @@ TODO:
 
 -> connect with database DONE
 -> run first query DONE
--> try to write data to database 
+-> try to write data to database DONE
 
         INSERT INTO Game (gameName, minLevel, language)
             VALUES ('a', '0', 'ENG');
@@ -25,8 +25,18 @@ kroki:
 
 -> aplikacja nie wyswietla gry jak gameNAme == NULL
 
--> skrypt sprawdza czy dla danego klucza jest wpis w bazie i czy nie jest już uzupełniony
+-> skrypt sprawdza czy dla danego klucza jest wpis w bazie i czy nie jest już uzupełniony DONE
 
 -> jeśli uzupełniony pokazuje statystyki dotyczące tej gry
 
 -> jeśli nie to pobiera listę pytań
+
+Statystyki:
+1. znajdź pytania dla gameID (Castle game 1004) DONE 
+    SELECT * FROM Question WHERE gameID = 1004
+2. dla każdego pytania znajdź listę odpowiedzi (pierwsze pytanie questionID = 1015) DONE
+    SELECT * FROM Answer WHERE questionID = 1015
+3. dla każdej odpowiedzi wyświetl chosen / showed (np answerID = 103)
+    SELECT * FROM Log WHERE answerID = 103
+4. policz ile jest logów z tą odpowiedzią 
+    SELECT COUNT(*) FROM Log WHERE answerID = 99
