@@ -14,8 +14,7 @@ def getConnection():
 #--------------------------------------------------------
 
 def getUserID():
-    print("Your login in Crowd app:")
-    userName = raw_input()
+    userName = raw_input("Your login in Crowd app: ")
 
     cursor.execute("SELECT profilID FROM Profile WHERE name = '" + userName + "'")
     result = cursor.fetchone()
@@ -31,7 +30,6 @@ def checkIsEmptyGame(userID, accessKey):
     key = cursor.fetchone()
     while key:
         if int(key[0]) == accessKey:
-            print("key found!")
             cursor.execute("SELECT * FROM Game where ownerID = " + str(userID) + " AND accessKey = " + str(key[0]))
             result = cursor.fetchone()
             if result[1] is None:
@@ -48,8 +46,7 @@ def checkIsEmptyGame(userID, accessKey):
 
 #--------------------------------------------------------
 def checkAccessKey(userID):
-    print("Enter your access key: ")
-    key = raw_input()
+    key = raw_input("Enter your access key: ")
     accessKey = int(key)
     if accessKey == 0:
         print("Wrong key")
@@ -57,7 +54,7 @@ def checkAccessKey(userID):
     return checkIsEmptyGame(userID, accessKey)
 
 #--------------------------------------------------------
-def findPossibleAnswers(questionID, cursor):
+def findPossibleAnswers(questionID):
     cursor.execute("SELECT * FROM Answer WHERE questionID = " + str(questionID))
     answers = cursor.fetchall()
     for answer in answers:
@@ -69,29 +66,54 @@ def findPossibleAnswers(questionID, cursor):
         print("\t" + str(answer[2]) + "\tshowed: " + str(answer[9]) + "\tchosen: " + str(answer[8]) + "\t" + str(percentage) + "%")
 
 
+#--------------------------------------------------------
+def findAnswersForOpenQeston(questionID):
+    cursor.execute("SELECT answerID FROM Log WHERE questionID = " + str(questionID))
+    answerIDlist = cursor.fetchall()
+    for answerID in answerIDlist:
+        print("None")
+
 
 #--------------------------------------------------------
-def generateStatistics(userID, gameID, cursor):
+def generateStatistics(userID, gameID):
     cursor.execute("SELECT * FROM Question WHERE gameID = " + str(gameID))
     questions = cursor.fetchall()
     questionNumber = 1
     for question in questions:
-        print("\n" + str(questionNumber) + ": " + question[2])
-        findPossibleAnswers(question[0], cursor)
+        questionID = question[0]
+        content = question[2]
+        typeID = question[3]
+        print("\n" + str(questionNumber) + ": " + content)
+        if typeID == 1004: #open answer
+            findAnswersForOpenQeston(questionID)
+        else:
+            findPossibleAnswers(questionID)
         questionNumber += 1
 
 
-
-
+#--------------------------------------------------------
+def generateJSONfile():
+    with open('game.json') as gameFile:
+        content = json.load(gameFile)
+        print(content["gameName"])
+        questionList = content["questions"]
+        for q in questionList:
+            print(q["questionText"])
+            
 #--------------------------------------------------------
 import pyodbc
 import sys
+import json 
+
+print("Connecting to database...")
+
 cursor = getConnection()
 userID = getUserID()
 emptyGame, gameID = checkAccessKey(userID)
 
 if emptyGame is True:
     print("Add new game")
+    generateJSONfile()
 else:
-    print("Please wait, statistics are loaded.")
-    generateStatistics(userID, gameID, cursor)
+    print("\nLoading statistics...")
+    generateStatistics(userID, gameID)

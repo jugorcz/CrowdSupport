@@ -36,7 +36,24 @@ Statystyki:
     SELECT * FROM Question WHERE gameID = 1004
 2. dla każdego pytania znajdź listę odpowiedzi (pierwsze pytanie questionID = 1015) DONE
     SELECT * FROM Answer WHERE questionID = 1015
-3. dla każdej odpowiedzi wyświetl chosen / showed (np answerID = 103)
+3. dla każdej odpowiedzi wyświetl chosen / showed (np answerID = 103) DONE
     SELECT * FROM Log WHERE answerID = 103
-4. policz ile jest logów z tą odpowiedzią 
+4. policz ile jest logów z tą odpowiedzią  ??
     SELECT COUNT(*) FROM Log WHERE answerID = 99
+
+
+Dodawanie pytań:
+1. parametry gry:
+    -> gameName
+    -> minLevel
+    -> language
+2. parametry pytania:
+    -> questionText
+    -> typeID (1 - text question, 2 - image question <1003>, 3 - open question <1004>)
+    -> questionImage
+    -> defaultAnswer (1- tak, 0 -nie)
+3. parametry odpowiedzi:
+    -> answerText
+    -> answerImage
+
+Generowany jest json którego trzeba uzupełnić

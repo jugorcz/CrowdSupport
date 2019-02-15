@@ -1,0 +1,56 @@
+{
+    "gameName": "my game",
+    "gameDescription": "TODO",
+    "minLevel": "TODO",
+    "language": "END/PL",
+    "questions": [
+        {
+            "questionText": "gestion 1",
+            "typeID": "1 - text, 2 - image, 3 - open",
+            "image": "optional, if type == 2, here should be path",
+            "needDefaultAnswer": "1 - yes, 0 - no",
+            "answers": [
+                {
+                    "answerText": "optional",
+                    "answerImage": "optional"
+                },
+                {
+                    "answerText": "optional",
+                    "answerImage": "optional"
+                },
+                {
+                    "answerText": "optional",
+                    "answerImage": "optional"
+                },
+                {
+                    "answerText": "optional",
+                    "answerImage": "optional"
+                }
+            ]
+        },
+        {
+            "questionText": "guestion 2",
+            "typeID": "1 - text, 2 - image, 3 - open",
+            "image": "optional, if type == 2, here should be path",
+            "needDefaultAnswer": "1 - yes, 0 - no",
+            "answers": [
+                {
+                    "answerText": "optional",
+                    "answerImage": "optional"
+                },
+                {
+                    "answerText": "optional",
+                    "answerImage": "optional"
+                },
+                {
+                    "answerText": "optional",
+                    "answerImage": "optional"
+                },
+                {
+                    "answerText": "optional",
+                    "answerImage": "optional"
+                }
+            ]
+        }
+    ]
+}
