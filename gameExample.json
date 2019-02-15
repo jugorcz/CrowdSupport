@@ -1,26 +1,30 @@
 {
-    "gameName": "My game",
+    "gameName": "my game",
     "gameDescription": "description",
-    "minLevel": 1,
-    "language": "ENG",
+    "minLevel": "0|1|2|...",
+    "language": "ENG|PL",
     "questions": [
         {
-            "questionText": "Do You like AGH?",
-            "typeID": 1,
-            "image": "",
-            "needDefaultAnswer": 1,
+            "questionText": "question 1",
+            "typeID": "1 - text, 2 - image, 3 - open",
+            "image": "optional, if typeID == 2, here should be path",
+            "needDefaultAnswer": "1 - yes|0 - no",
             "answers": [
                 {
                     "answerText": "Yes",
-                    "answerImage": ""
+                    "answerImage": "optional"
                 },
                 {
                     "answerText": "No",
-                    "answerImage": ""
+                    "answerImage": "optional"
+                },
+                {
+                    "answerText": "Blue",
+                    "answerImage": "optional"
                 },
                 {
                     "answerText": "Maybe",
-                    "answerImage": ""
+                    "answerImage": "optional"
                 }
             ]
         },
