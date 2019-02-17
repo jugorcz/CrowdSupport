@@ -66,3 +66,7 @@ Arkusz EXCEL:
 2. treść pytania
     -> pytanie 1 - row = 4
     -> pytanie 2 - row += lp odpowiedzi z pytania 1 + 1
+
+pip install pillow
+pip install XlsxWriter
+pip install pyodbc

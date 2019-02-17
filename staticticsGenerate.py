@@ -1,4 +1,6 @@
 import pyodbc
+import io
+from PIL import Image
 import xlsxwriter
 
 #--------------------------------------------------------
@@ -52,7 +54,7 @@ def writeGameProperties(gameID, cursor, worksheet):
     minLevel = game[2]
     lang = game[3]
 
-    worksheet.set_column('A:A', 20)
+    worksheet.set_column('A:A', 30)
     worksheet.set_column('B:B', 30)
     worksheet.set_column('C:C', 12)
     worksheet.set_column('D:D', 12)
@@ -62,7 +64,10 @@ def writeGameProperties(gameID, cursor, worksheet):
     worksheet.write(2,0,"language: " + str(lang))
 
     return 4 #next row number
-
+#--------------------------------------------------------
+def getImage(data):
+    img = Image.open(io.BytesIO(data))
+    img.save("q" + str(questionNumber) + ".png")
 
 #--------------------------------------------------------
 def readQuestions(userID, gameID, cursor, worksheet, row, workbook):
@@ -73,10 +78,20 @@ def readQuestions(userID, gameID, cursor, worksheet, row, workbook):
         questionID = question[0]
         content = question[2]
         typeID = question[3]
+        image = question[5]
+
+        if image is not None:
+            img = Image.open(io.BytesIO(image))
+            imageFileName = "img/q" + str(questionNumber) + ".png"
+            img.save(imageFileName)
+            worksheet.set_row(row+2, 20)  # Set the height of Row 1 to 20.
+            worksheet.insert_image(row+2, 0, imageFileName, {'x_scale': 0.1, 'y_scale': 0.1})
+
         print("\n" + str(questionNumber) + ": " + content)
 
         row += 1
         worksheet.write(row,0,str(questionNumber) + ": " + content)
+
         row += 1
 
         if typeID == 1004: #open answer
