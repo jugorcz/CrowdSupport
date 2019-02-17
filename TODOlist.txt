@@ -10,8 +10,8 @@ TODO:
         UPDATE Game SET accessKey = 1234 WHERE gameID = 1
 
 -> images?
--> way of storing questions and answers (json?)
--> user interface for adding this 
+-> way of storing questions and answers (json?) DONE
+-> user interface for adding this X
 -> getting statistics
 -> new column in Game table - accessKey DONE
 
@@ -23,13 +23,13 @@ kroki:
     3. INSERT INTO Game (accessKey, ownerID)
             VALUES ('accessKey', '4');
 
--> aplikacja nie wyswietla gry jak gameNAme == NULL
+-> aplikacja nie wyswietla gry jak gameNAme == NULL DONE
 
 -> skrypt sprawdza czy dla danego klucza jest wpis w bazie i czy nie jest już uzupełniony DONE
 
--> jeśli uzupełniony pokazuje statystyki dotyczące tej gry
+-> jeśli uzupełniony pokazuje statystyki dotyczące tej gry DONE
 
--> jeśli nie to pobiera listę pytań
+-> jeśli nie to pobiera listę pytań DONE
 
 Statystyki:
 1. znajdź pytania dla gameID (Castle game 1004) DONE 
@@ -40,7 +40,6 @@ Statystyki:
     SELECT * FROM Log WHERE answerID = 103
 4. policz ile jest logów z tą odpowiedzią  ??
     SELECT COUNT(*) FROM Log WHERE answerID = 99
-
 
 Dodawanie pytań:
 1. parametry gry:
@@ -56,4 +55,14 @@ Dodawanie pytań:
     -> answerText
     -> answerImage
 
-Generowany jest json którego trzeba uzupełnić
+Generowany jest json którego trzeba uzupełnić DONE
+
+Arkusz EXCEL:
+1. dane gry
+    -> wiersz 1 nazwa
+    -> wiersz 2 opis 
+    -> wiersz 3 język
+    SELECT * from Game WHERE gameID = 1004
+2. treść pytania
+    -> pytanie 1 - row = 4
+    -> pytanie 2 - row += lp odpowiedzi z pytania 1 + 1

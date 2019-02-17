@@ -10,7 +10,6 @@ def getConnection():
     cursor = cnxn.cursor()
     return cursor
 
-
 #--------------------------------------------------------
 
 def getUserID():
