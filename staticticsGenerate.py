@@ -2,23 +2,35 @@ import pyodbc
 import xlsxwriter
 
 #--------------------------------------------------------
-def findPossibleAnswers(questionID, cursor, worksheet, row):
-    cursor.execute("SELECT * FROM Answer WHERE questionID = " + str(questionID))
+def findPossibleAnswers(questionID, cursor, worksheet, row, workbook):
+    cursor.execute("SELECT * FROM Answer WHERE questionID = " + str(questionID) + " ORDER BY 100*chosen/(showed + 1) DESC")
     answers = cursor.fetchall()
+    first = True
     for answer in answers:
         showed = answer[7]
         chosen = answer[6]
         percentage = 0
         content = answer[2]
+        default = answer[5]
+        if default == 1:
+            continue
+
         if chosen != 0 and showed != 0:
             percentage = 100 * chosen / showed
 
+
         print("\t" + content + "\tshowed: " + str(showed) + "\tchosen: " + str(chosen) + "\t" + str(percentage) + "%")
 
-        worksheet.write(row,1, content)
-        worksheet.write(row,2, "schowed: " + str(showed))
-        worksheet.write(row,3, "chosen:" + str(chosen))
-        worksheet.write(row,4, str(percentage) + "%")
+        if first:
+            bold = workbook.add_format({'bold': True})
+            first = False
+        else:
+            bold = workbook.add_format({'bold': False})
+
+        worksheet.write(row,1, content, bold)
+        worksheet.write(row,2, "showed: " + str(showed), bold)
+        worksheet.write(row,3, "chosen:" + str(chosen), bold)
+        worksheet.write(row,4, str(percentage) + "%", bold)
 
         row += 1
 
@@ -42,22 +54,18 @@ def writeGameProperties(gameID, cursor, worksheet):
 
     worksheet.set_column('A:A', 20)
     worksheet.set_column('B:B', 30)
-    worksheet.set_column('C:C', 10)
-    worksheet.set_column('D:D', 10)
+    worksheet.set_column('C:C', 12)
+    worksheet.set_column('D:D', 12)
 
-    worksheet.write(0,0,"GAME NAME:")
-    worksheet.write(1,0,"MINIMUM LEVEL:")
-    worksheet.write(2,0,"LANGUAGE:")
-
-    worksheet.write(0,1,gameName)
-    worksheet.write(1,1,str(minLevel))
-    worksheet.write(2,1,lang)
+    worksheet.write(0,0,"game : " + str(gameName))
+    worksheet.write(1,0,"min level: " + str(minLevel))
+    worksheet.write(2,0,"language: " + str(lang))
 
     return 4 #next row number
 
 
 #--------------------------------------------------------
-def readQuestions(userID, gameID, cursor, worksheet, row):
+def readQuestions(userID, gameID, cursor, worksheet, row, workbook):
     cursor.execute("SELECT * FROM Question WHERE gameID = " + str(gameID))
     questions = cursor.fetchall()
     questionNumber = 1
@@ -74,7 +82,7 @@ def readQuestions(userID, gameID, cursor, worksheet, row):
         if typeID == 1004: #open answer
             findAnswersForOpenQeston(questionID, cursor, worksheet, row)
         else:
-            row = findPossibleAnswers(questionID, cursor, worksheet, row)
+            row = findPossibleAnswers(questionID, cursor, worksheet, row, workbook)
         questionNumber += 1
 
 #--------------------------------------------------------
@@ -84,7 +92,7 @@ def generateStatistics(userID, gameID, dbCursor):
     worksheet = workbook.add_worksheet()
 
     row = writeGameProperties(gameID, cursor, worksheet)
-    readQuestions(userID, gameID, cursor, worksheet, row)
+    readQuestions(userID, gameID, cursor, worksheet, row, workbook)
 
     workbook.close()
     
