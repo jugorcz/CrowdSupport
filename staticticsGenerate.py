@@ -8,20 +8,34 @@ def findPossibleAnswers(questionID, cursor, worksheet, row, workbook):
     cursor.execute("SELECT * FROM Answer WHERE questionID = " + str(questionID) + " ORDER BY 100*chosen/(showed + 1) DESC")
     answers = cursor.fetchall()
     first = True
+    answerNumber = 1
     for answer in answers:
         showed = answer[7]
         chosen = answer[6]
         percentage = 0
         content = answer[2]
         default = answer[5]
+        image = answer[4]
+
+        rows = 1
+
         if default == 1:
             continue
+
+        if image is not None:
+            img = Image.open(io.BytesIO(image))
+            imageFileName = "img/a" + str(answerNumber) + ".png"
+            img.save(imageFileName)
+            width, height = img.size
+            scale = 60.0/float(height)
+            #worksheet.set_row(row+2, 20)  # Set the height of Row 1 to 20.
+            worksheet.insert_image(row+1, 1, imageFileName, {'x_scale': scale, 'y_scale': scale})
+            rows = 5
 
         if chosen != 0 and showed != 0:
             percentage = 100 * chosen / showed
 
-
-        print("\t" + content + "\tshowed: " + str(showed) + "\tchosen: " + str(chosen) + "\t" + str(percentage) + "%")
+        print("\tAnswer: " + str(answerNumber))
 
         if first:
             bold = workbook.add_format({'bold': True})
@@ -34,7 +48,8 @@ def findPossibleAnswers(questionID, cursor, worksheet, row, workbook):
         worksheet.write(row,3, "chosen:" + str(chosen), bold)
         worksheet.write(row,4, str(percentage) + "%", bold)
 
-        row += 1
+        row += rows
+        answerNumber += 1
 
     return row
 
@@ -64,10 +79,7 @@ def writeGameProperties(gameID, cursor, worksheet):
     worksheet.write(2,0,"language: " + str(lang))
 
     return 4 #next row number
-#--------------------------------------------------------
-def getImage(data):
-    img = Image.open(io.BytesIO(data))
-    img.save("q" + str(questionNumber) + ".png")
+
 
 #--------------------------------------------------------
 def readQuestions(userID, gameID, cursor, worksheet, row, workbook):
@@ -79,18 +91,36 @@ def readQuestions(userID, gameID, cursor, worksheet, row, workbook):
         content = question[2]
         typeID = question[3]
         image = question[5]
-
+        closed = question[7]
+        rows = 1
         if image is not None:
             img = Image.open(io.BytesIO(image))
             imageFileName = "img/q" + str(questionNumber) + ".png"
             img.save(imageFileName)
+            width, height = img.size
+            #print(width)
+            #print(height)
+            scale = 95.0/float(height)
+            #print(scale)
             worksheet.set_row(row+2, 20)  # Set the height of Row 1 to 20.
-            worksheet.insert_image(row+2, 0, imageFileName, {'x_scale': 0.1, 'y_scale': 0.1})
+            worksheet.insert_image(row+2, 0, imageFileName, {'x_scale': scale, 'y_scale': scale})
+            rows = 2
 
-        print("\n" + str(questionNumber) + ": " + content)
+        print("\nQuestion: " + str(questionNumber))
 
         row += 1
-        worksheet.write(row,0,str(questionNumber) + ": " + content)
+        if closed == 1:
+            cell_format = workbook.add_format({'bg_color': '99ff66'}) #green
+            worksheet.write(row,1,"Found proper answer", cell_format)
+        else:
+            cell_format = workbook.add_format({'bg_color': 'ff9966'}) #red
+            worksheet.write(row,1,"", cell_format)
+
+        worksheet.write(row,0,str(questionNumber) + ": " + content, cell_format)
+        
+        worksheet.write(row,2,"", cell_format)
+        worksheet.write(row,3,"", cell_format)
+        worksheet.write(row,4,"", cell_format)
 
         row += 1
 
@@ -99,6 +129,7 @@ def readQuestions(userID, gameID, cursor, worksheet, row, workbook):
         else:
             row = findPossibleAnswers(questionID, cursor, worksheet, row, workbook)
         questionNumber += 1
+        row += rows
 
 #--------------------------------------------------------
 def generateStatistics(userID, gameID, dbCursor):
@@ -108,6 +139,8 @@ def generateStatistics(userID, gameID, dbCursor):
 
     row = writeGameProperties(gameID, cursor, worksheet)
     readQuestions(userID, gameID, cursor, worksheet, row, workbook)
+
+    print("\nDone, check report.")
 
     workbook.close()
     

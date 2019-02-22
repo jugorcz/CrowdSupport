@@ -5,7 +5,7 @@
     "language": "ENG",
     "questions": [
         {
-            "questionText": "Do You like AGH?",
+            "questionText": "Do You like flowers?",
             "typeID": 1,
             "image": "",
             "needDefaultAnswer": 1,
@@ -16,10 +16,6 @@
                 },
                 {
                     "answerText": "No",
-                    "answerImage": ""
-                },
-                {
-                    "answerText": "Maybe",
                     "answerImage": ""
                 }
             ]
@@ -35,15 +31,7 @@
                     "answerImage": ""
                 },
                 {
-                    "answerText": "House",
-                    "answerImage": ""
-                },
-                {
-                    "answerText": "Cat",
-                    "answerImage": ""
-                },
-                {
-                    "answerText": "Dog",
+                    "answerText": "Not flower",
                     "answerImage": ""
                 }
             ]
