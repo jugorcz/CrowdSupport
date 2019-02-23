@@ -1,8 +1,8 @@
 {
     "gameName": "My game",
     "gameDescription": "description",
-    "minLevel": 1,
-    "language": "ENG",
+    "minLevel": 10,
+    "language": "PL",
     "questions": [
         {
             "questionText": "Do You like flowers?",

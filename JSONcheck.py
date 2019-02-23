@@ -1,5 +1,6 @@
 import json 
 import os
+import pyodbc
 
 #--------------------------------------------------------
 def checkGameProperties(content):
@@ -78,7 +79,28 @@ def checkQuestions(questions):
         return False
 
 #--------------------------------------------------------
-def checkJSONfile(gameID):
+def insertGame(content, cursor, gameID):
+    gameName = content["gameName"]
+    description = content["gameDescription"]
+    level = content["minLevel"]
+    lang = content["language"].strip()
+    description = content["gameDescription"]
+    query = "UPDATE Game SET gameName = '" + gameName + "' where gameID = " + str(gameID)
+    print(query)
+    #cursor.execute(query)
+
+    query = "UPDATE Game SET minLevel = " + str(level) + " where gameID = " + str(gameID)
+    cursor.execute(query)
+
+    query = "UPDATE Game SET language = '" + str(lang) + "' where gameID = " + str(gameID)
+    cursor.execute(query)
+
+    query = "UPDATE Game SET description = '" + str(description) + "' where gameID = " + str(gameID)
+    cursor.execute(query)
+
+
+#--------------------------------------------------------
+def checkJSONfile(gameID, cursor):
     with open('game.json') as gameFile:
         content = json.load(gameFile)
         if checkGameProperties(content) is False:
@@ -86,5 +108,6 @@ def checkJSONfile(gameID):
         questions = content["questions"]
         if checkQuestions(questions) is False:
             return False
-        print("--------------------------\nJSON file correct.")
+        print("--------------------------\n\nJSON file correct.\n")
+        insertGame(content, cursor, gameID)
     return True

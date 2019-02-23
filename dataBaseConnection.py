@@ -8,7 +8,7 @@ def getConnection():
     cnxn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
 
     cursor = cnxn.cursor()
-    return cursor
+    return cursor, cnxn
 
 #--------------------------------------------------------
 
@@ -62,12 +62,13 @@ from staticticsGenerate import generateStatistics
 
 print("Connecting to database...")
 
-cursor = getConnection()
+cursor, cnxn = getConnection()
 userID = getUserID()
 emptyGame, gameID = checkAccessKey(userID)
 
 if emptyGame is True:
-    checkJSONfile(gameID)
+    checkJSONfile(gameID, cursor)
+    cnxn.commit()
 else:
     print("\nLoading statistics...")
     generateStatistics(userID, gameID, cursor)
