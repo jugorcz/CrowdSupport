@@ -82,6 +82,8 @@ insert question:
 INSERT INTO Question (gameID, questionText, typeID, questionImage, defaultAnswer, closed)
 VALUES (2011, 'sialala', 1 , NULL, 1, 0);
 
+najnowsze ID: SELECT max(questionID) FROM Question 
+
 insert answer:
 INSERT INTO Answer (questionID, answerText, typeID, answerImage, defaultAnswer, chosen, showed)
 VALUES (1, 'sialala', 1 , NULL, 0, 0, 0);

@@ -67,7 +67,7 @@ userID = getUserID()
 emptyGame, gameID = checkAccessKey(userID)
 
 if emptyGame is True:
-    checkJSONfile(gameID, cursor)
+    checkJSONfile(gameID, cursor, cnxn)
     cnxn.commit()
 else:
     print("\nLoading statistics...")

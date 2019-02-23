@@ -28,13 +28,20 @@
             "answers": [
                 {
                     "answerText": "Flower",
-                    "answerImage": ""
+                    "answerImage": "flower.png"
                 },
                 {
                     "answerText": "Not flower",
-                    "answerImage": ""
+                    "answerImage": "flower.png"
                 }
             ]
+        },
+        {
+            "questionText": "What do you think?",
+            "typeID": 3,
+            "image": "",
+            "needDefaultAnswer": 0,
+            "answers": []
         }
     ]
 }
