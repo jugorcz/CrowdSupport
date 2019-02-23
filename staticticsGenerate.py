@@ -2,6 +2,7 @@ import pyodbc
 import io
 from PIL import Image
 import xlsxwriter
+import os
 
 #--------------------------------------------------------
 def findPossibleAnswers(questionID, cursor, worksheet, row, workbook):
@@ -30,6 +31,7 @@ def findPossibleAnswers(questionID, cursor, worksheet, row, workbook):
             scale = 60.0/float(height)
             #worksheet.set_row(row+2, 20)  # Set the height of Row 1 to 20.
             worksheet.insert_image(row+1, 1, imageFileName, {'x_scale': scale, 'y_scale': scale})
+            #os.remove(imageFileName)
             rows = 5
 
         if chosen != 0 and showed != 0:
@@ -56,10 +58,25 @@ def findPossibleAnswers(questionID, cursor, worksheet, row, workbook):
 
 #--------------------------------------------------------
 def findAnswersForOpenQeston(questionID, cursor, worksheet, row):
-    cursor.execute("SELECT answerID FROM Log WHERE questionID = " + str(questionID))
-    answerIDlist = cursor.fetchall()
-    for answerID in answerIDlist:
-        print("None")
+    cursor.execute("SELECT * FROM Log WHERE questionID = " + str(questionID))
+    logsDictionary = dict()
+    logs = cursor.fetchall()
+    for log in logs:
+        answer = log[4]
+        if answer is None:
+            continue
+
+        if answer in logsDictionary:
+            logsDictionary[answer] += 1
+        else: 
+            logsDictionary[answer] = 1
+
+    for answer in logsDictionary:
+        worksheet.write(row,1, answer)
+        worksheet.write(row,2, "appeared: " + str(logsDictionary[answer]))
+        print(str(answer) + " appeared: " + str(logsDictionary[answer]))
+        row += 1
+    return row
 
 #--------------------------------------------------------
 def writeGameProperties(gameID, cursor, worksheet):
@@ -125,7 +142,7 @@ def readQuestions(userID, gameID, cursor, worksheet, row, workbook):
         row += 1
 
         if typeID == 1004: #open answer
-            findAnswersForOpenQeston(questionID, cursor, worksheet, row)
+            row = findAnswersForOpenQeston(questionID, cursor, worksheet, row)
         else:
             row = findPossibleAnswers(questionID, cursor, worksheet, row, workbook)
         questionNumber += 1
