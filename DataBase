@@ -1,0 +1,154 @@
+-- DROP SCHEMA dbo;
+
+CREATE SCHEMA dbo;
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.Shop GO
+
+CREATE TABLE crowd.dbo.Shop (
+    itemID int IDENTITY(0,1) NOT NULL,
+    name varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    icon varbinary(100) NULL,
+    price int NOT NULL,
+    description varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    CONSTRAINT Shop_PK PRIMARY KEY (itemID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.Tag GO
+
+CREATE TABLE crowd.dbo.Tag (
+    tagID int IDENTITY(0,1) NOT NULL,
+    tag varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    CONSTRAINT Tag_PK PRIMARY KEY (tagID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.[Type] GO
+
+CREATE TABLE crowd.dbo.[Type] (
+    typeID int IDENTITY(0,1) NOT NULL,
+    name varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    isQuestion bit NOT NULL,
+    CONSTRAINT Type_PK PRIMARY KEY (typeID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.Avatar GO
+
+CREATE TABLE crowd.dbo.Avatar (
+    avatarID int IDENTITY(0,1) NOT NULL,
+    avatarPic varbinary(100) NULL,
+    lockedAvatarPic varbinary(100) NULL,
+    itemID int NOT NULL,
+    CONSTRAINT Avatar_PK PRIMARY KEY (avatarID),
+    CONSTRAINT Avatar_FK FOREIGN KEY (itemID) REFERENCES crowd.dbo.Shop(itemID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.Profile GO
+
+CREATE TABLE crowd.dbo.Profile (
+    profileID int IDENTITY(0,1) NOT NULL,
+    name varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    password varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    points int NOT NULL,
+    userLevel int NOT NULL,
+    missingPoints int NULL,
+    money int NOT NULL,
+    avatarID int NOT NULL,
+    CONSTRAINT Profile_PK PRIMARY KEY (profileID),
+    CONSTRAINT Profile_FK1 FOREIGN KEY (avatarID) REFERENCES crowd.dbo.Avatar(avatarID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.UserItems GO
+
+CREATE TABLE crowd.dbo.UserItems (
+    profileID int NOT NULL,
+    itemID int NOT NULL,
+    CONSTRAINT UserItems_FK FOREIGN KEY (profileID) REFERENCES crowd.dbo.Profile(profileID),
+    CONSTRAINT UserItems_FK_1 FOREIGN KEY (itemID) REFERENCES crowd.dbo.Shop(itemID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.Game GO
+
+CREATE TABLE crowd.dbo.Game (
+    gameID int IDENTITY(0,1) NOT NULL,
+    gameName varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    minLevel int NOT NULL,
+    [language] varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    ownerID int NOT NULL,
+    accessKey int NOT NULL,
+    CONSTRAINT Game_PK PRIMARY KEY (gameID),
+    CONSTRAINT Game_FK FOREIGN KEY (ownerID) REFERENCES crowd.dbo.Profile(profileID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.GameTagRelation GO
+
+CREATE TABLE crowd.dbo.GameTagRelation (
+    gameID int NOT NULL,
+    tagID int NOT NULL,
+    CONSTRAINT GameTagRelation_FK FOREIGN KEY (gameID) REFERENCES crowd.dbo.Game(gameID),
+    CONSTRAINT GameTagRelation_FK_1 FOREIGN KEY (tagID) REFERENCES crowd.dbo.Tag(tagID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.Question GO
+
+CREATE TABLE crowd.dbo.Question (
+    questionID int IDENTITY(0,1) NOT NULL,
+    gameID int NOT NULL,
+    questionText varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    numOfAnsvered int NOT NULL,
+    questionImage varbinary(100) NULL,
+    defaultAnswer bit NOT NULL,
+    typeID int NOT NULL,
+    CONSTRAINT Question_PK PRIMARY KEY (questionID),
+    CONSTRAINT Question_FK FOREIGN KEY (gameID) REFERENCES crowd.dbo.Game(gameID),
+    CONSTRAINT Question_FK_1 FOREIGN KEY (typeID) REFERENCES crowd.dbo.[Type](typeID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.Answer GO
+
+CREATE TABLE crowd.dbo.Answer (
+    answerID int IDENTITY(0,1) NOT NULL,
+    questionID int NOT NULL,
+    answerText varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NOT NULL,
+    typeID int NOT NULL,
+    answerPic varbinary(100) NULL,
+    isDefault bit NOT NULL,
+    chosen int NOT NULL,
+    shown int NOT NULL,
+    CONSTRAINT Answer_PK PRIMARY KEY (answerID),
+    CONSTRAINT Answer_FK FOREIGN KEY (questionID) REFERENCES crowd.dbo.Question(questionID),
+    CONSTRAINT Answer_FK_1 FOREIGN KEY (typeID) REFERENCES crowd.dbo.[Type](typeID)
+) GO
+
+-- Drop table
+
+-- DROP TABLE crowd.dbo.Log GO
+
+CREATE TABLE crowd.dbo.Log (
+    profileID int NOT NULL,
+    questionID int NOT NULL,
+    answerID int NOT NULL,
+    answerDate date NOT NULL,
+    answerText varchar(100) COLLATE SQL_Polish_CP1250_CS_AS NULL,
+    CONSTRAINT Log_FK FOREIGN KEY (profileID) REFERENCES crowd.dbo.Profile(profileID),
+    CONSTRAINT Log_FK_1 FOREIGN KEY (questionID) REFERENCES crowd.dbo.Question(questionID),
+    CONSTRAINT Log_FK_2 FOREIGN KEY (answerID) REFERENCES crowd.dbo.Answer(answerID)
+) GO

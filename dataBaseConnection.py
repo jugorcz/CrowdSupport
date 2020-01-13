@@ -1,35 +1,44 @@
-def getConnection():
-    server = 'den1.mssql8.gear.host'
+import pyodbc
+import sys
+from JSONcheck import check_json_file
+from staticticsGenerate import generate_statistics
+
+
+def get_connection():
+    server = 'den1.mssql7.gear.host'
     database = 'crowd'
     username = 'crowd'
-    password = 'Ng65JF4j79-!'
-    driver= '{ODBC Driver 17 for SQL Server}'
+    password = 'Sa9X?-41M3nR'
+    driver = '{ODBC Driver 17 for SQL Server}'
 
-    cnxn = pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password)
+    conn = pyodbc.connect('DRIVER=' + driver + ';SERVER=' +
+                          server + ';PORT=1433;DATABASE=' +
+                          database + ';UID=' + username +
+                          ';PWD=' + password)
 
-    cursor = cnxn.cursor()
-    return cursor, cnxn
+    my_cursor = conn.cursor()
+    return my_cursor, conn
 
-#--------------------------------------------------------
 
-def getUserID():
-    userName = raw_input("Your login in Crowd app: ")
+def get_user_id():
+    user_name = input("Your login in Crowd app: ")
 
-    cursor.execute("SELECT profilID FROM Profile WHERE name = '" + userName + "'")
+    cursor.execute("SELECT profileID FROM Profile WHERE name = '" + user_name + "'")
     result = cursor.fetchone()
     if result is None:
         print("You are not user of Crowd app, bye!")
         sys.exit()
     return result[0]
 
-#--------------------------------------------------------
-def checkIsEmptyGame(userID, accessKey):
-    cursor.execute("SELECT accessKey FROM Game where ownerID = " + str(userID))
+
+def check_if_empty_game(user_id, access_key):
+    cursor.execute("SELECT accessKey FROM Game where ownerID = " + str(user_id))
 
     key = cursor.fetchone()
     while key:
-        if int(key[0]) == accessKey:
-            cursor.execute("SELECT * FROM Game where ownerID = " + str(userID) + " AND accessKey = " + str(key[0]))
+        if int(key[0]) == access_key:
+            cursor.execute("SELECT * FROM Game where ownerID = " + str(user_id) +
+                           " AND accessKey = " + str(key[0]))
             result = cursor.fetchone()
             if result[1] is None:
                 print("You can add new game.")
@@ -43,32 +52,24 @@ def checkIsEmptyGame(userID, accessKey):
     sys.exit()
 
 
-#--------------------------------------------------------
-def checkAccessKey(userID):
-    key = raw_input("Enter your access key: ")
-    accessKey = int(key)
-    if accessKey == 0:
+def check_access_key(user_id):
+    key = input("Enter your access key: ")
+    access_key = int(key)
+    if access_key == 0:
         print("Wrong key")
         sys.exit()
-    return checkIsEmptyGame(userID, accessKey)
+    return check_if_empty_game(user_id, access_key)
 
 
-#--------------------------------------------------------
-import pyodbc
-import sys
-import os
-from JSONcheck import checkJSONfile
-from staticticsGenerate import generateStatistics
+if __name__ == "__main__":
+    print("Connecting to database...")
+    cursor, connection = get_connection()
+    user_id = get_user_id()
+    empty_game, game_id = check_access_key(user_id)
 
-print("Connecting to database...")
-
-cursor, cnxn = getConnection()
-userID = getUserID()
-emptyGame, gameID = checkAccessKey(userID)
-
-if emptyGame is True:
-    checkJSONfile(gameID, cursor, cnxn)
-    cnxn.commit()
-else:
-    print("\nLoading statistics...")
-    generateStatistics(userID, gameID, cursor)
+    if empty_game is True:
+        check_json_file(game_id, cursor, connection)
+        connection.commit()
+    else:
+        print("\nLoading statistics...")
+        generate_statistics(user_id, game_id, cursor)
